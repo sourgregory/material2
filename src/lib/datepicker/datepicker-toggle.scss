@@ -11,4 +11,8 @@ $mat-datepicker-toggle-icon-size: 24px !default;
   border: none;
   outline: none;
   vertical-align: middle;
+
+  &:not([disabled]) {
+    cursor: pointer;
+  }
 }

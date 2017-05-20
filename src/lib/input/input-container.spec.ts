@@ -18,9 +18,9 @@ import {PlatformModule} from '../core/platform/index';
 import {wrappedErrorMessage} from '../core/testing/wrapped-error-message';
 import {dispatchFakeEvent} from '../core/testing/dispatch-events';
 import {
-  MdInputContainerDuplicatedHintError,
-  MdInputContainerMissingMdInputError,
-  MdInputContainerPlaceholderConflictError
+  getMdInputContainerDuplicatedHintError,
+  getMdInputContainerMissingMdInputError,
+  getMdInputContainerPlaceholderConflictError
 } from './input-container-errors';
 
 
@@ -65,6 +65,7 @@ describe('MdInputContainer', function () {
         MdInputContainerWithValueBinding,
         MdInputContainerZeroTestController,
         MdTextareaWithBindings,
+        MdInputContainerWithNgIf,
       ],
     });
 
@@ -242,29 +243,41 @@ describe('MdInputContainer', function () {
     let fixture = TestBed.createComponent(MdInputContainerInvalidHintTestController);
 
     expect(() => fixture.detectChanges()).toThrowError(
-        wrappedErrorMessage(new MdInputContainerDuplicatedHintError('start')));
+        wrappedErrorMessage(getMdInputContainerDuplicatedHintError('start')));
   });
 
   it('validates there\'s only one hint label per side (attribute)', () => {
     let fixture = TestBed.createComponent(MdInputContainerInvalidHint2TestController);
 
     expect(() => fixture.detectChanges()).toThrowError(
-        wrappedErrorMessage(new MdInputContainerDuplicatedHintError('start')));
+        wrappedErrorMessage(getMdInputContainerDuplicatedHintError('start')));
   });
 
   it('validates there\'s only one placeholder', () => {
     let fixture = TestBed.createComponent(MdInputContainerInvalidPlaceholderTestController);
 
     expect(() => fixture.detectChanges()).toThrowError(
-        wrappedErrorMessage(new MdInputContainerPlaceholderConflictError()));
+        wrappedErrorMessage(getMdInputContainerPlaceholderConflictError()));
   });
 
   it('validates that mdInput child is present', () => {
     let fixture = TestBed.createComponent(MdInputContainerMissingMdInputTestController);
 
     expect(() => fixture.detectChanges()).toThrowError(
-        wrappedErrorMessage(new MdInputContainerMissingMdInputError()));
+        wrappedErrorMessage(getMdInputContainerMissingMdInputError()));
   });
+
+  it('validates that mdInput child is present after initialization', async(() => {
+    let fixture = TestBed.createComponent(MdInputContainerWithNgIf);
+
+    expect(() => fixture.detectChanges()).not.toThrowError(
+        wrappedErrorMessage(getMdInputContainerMissingMdInputError()));
+
+    fixture.componentInstance.renderInput = false;
+
+    expect(() => fixture.detectChanges()).toThrowError(
+        wrappedErrorMessage(getMdInputContainerMissingMdInputError()));
+  }));
 
   it('validates the type', () => {
     let fixture = TestBed.createComponent(MdInputContainerInvalidTypeTestController);
@@ -997,3 +1010,14 @@ class MdInputContainerWithFormGroupErrorMessages {
   `
 })
 class MdInputContainerWithPrefixAndSuffix {}
+
+@Component({
+  template: `
+    <md-input-container>
+      <input mdInput *ngIf="renderInput">
+    </md-input-container>
+  `
+})
+class MdInputContainerWithNgIf {
+  renderInput = true;
+}
