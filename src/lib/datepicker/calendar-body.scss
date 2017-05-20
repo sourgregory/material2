@@ -29,6 +29,7 @@ $mat-calendar-body-cell-content-size: 100% - $mat-calendar-body-cell-content-mar
 }
 
 .mat-calendar-body-cell {
+  cursor: pointer;
   position: relative;
   width: $mat-calendar-body-cell-size;
   height: 0;

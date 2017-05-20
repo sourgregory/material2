@@ -33,6 +33,7 @@ import {DateAdapter} from '../core/datetime/index';
 import {createMissingDateImplError} from './datepicker-errors';
 import {ESCAPE} from '../core/keyboard/keycodes';
 import {MdCalendar} from './calendar';
+import {RepositionScrollStrategy, ScrollDispatcher} from "../core";
 
 
 /** Used to generate a unique ID for each datepicker instance. */
@@ -158,6 +159,7 @@ export class MdDatepicker<D> implements OnDestroy {
 
   constructor(private _dialog: MdDialog, private _overlay: Overlay,
               private _viewContainerRef: ViewContainerRef,
+              private _scrollDispatcher: ScrollDispatcher,
               @Optional() private _dateAdapter: DateAdapter<D>,
               @Optional() private _dir: Dir) {
     if (!this._dateAdapter) {
@@ -265,6 +267,7 @@ export class MdDatepicker<D> implements OnDestroy {
     overlayState.positionStrategy = this._createPopupPositionStrategy();
     overlayState.hasBackdrop = true;
     overlayState.backdropClass = 'md-overlay-transparent-backdrop';
+    overlayState.scrollStrategy = new RepositionScrollStrategy(this._scrollDispatcher);
     overlayState.direction = this._dir ? this._dir.value : 'ltr';
 
     this._popupRef = this._overlay.create(overlayState);
